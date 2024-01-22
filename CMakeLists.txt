@@ -9,7 +9,7 @@ set(GLFWPP_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(deps/glfwpp)
 
 set(SRC
-  src/glad.c
+  src/gl.c
   src/main.cpp
 )
 

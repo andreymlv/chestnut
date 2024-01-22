@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 #include <glfwpp/glfwpp.h>
 
@@ -33,8 +33,8 @@ void main()
   glfw::Window window{640, 480, "Hello GLFWPP"};
   glfw::makeContextCurrent(window);
 
-  if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
+  if (!gladLoadGL(glfwGetProcAddress)) {
+    printf("Failed to initialize OpenGL context\n");
     return -1;
   }
 
@@ -127,13 +127,13 @@ void main()
   unsigned int VBO, VAO;
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
-  glBindVertexArray(VAO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBindVertexArray(VAO);
   glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float),
                vertices.data(), GL_STATIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-  glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glEnableVertexAttribArray(0);
   glBindVertexArray(0);
 
   while (!window.shouldClose()) {
@@ -142,6 +142,7 @@ void main()
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
 
     window.swapBuffers();
     glfw::pollEvents();
