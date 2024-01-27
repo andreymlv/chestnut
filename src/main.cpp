@@ -27,14 +27,14 @@ int main(int argc, char** argv) {
   auto port = result["port"].as<uint16_t>();
 
   auto addr = std::make_unique<SocketAddrV4>(Ipv4Addr::LOCALHOST, port);
-  auto socket = std::move(UdpSocket::bind(std::move(addr)).value());
+  auto socket = UdpSocket::bind(std::move(addr)).value();
 
   std::array<std::byte, 128> buf{};
   auto [amt, src] = socket.recv_from(buf).value();
-  /* fmt::println("[{}]", fmt::join(buf, ", ")); */
+  fmt::println("[{}]", fmt::join(buf, ", "));
 
-  /* std::ranges::reverse(buf); */
-  /* auto _ = socket.send_to(buf, std::move(src)).value(); */
+  std::ranges::reverse(buf);
+  auto _ = socket.send_to(buf, std::move(src)).value();
 
   return 0;
 }

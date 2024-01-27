@@ -1,8 +1,24 @@
 #include "socket.hpp"
 
+#include <memory>
+
 UdpSocket::UdpSocket(int handle) : handle(handle) {}
 
-UdpSocket::~UdpSocket() { close(handle); }
+UdpSocket::UdpSocket() : UdpSocket(-1) {}
+
+UdpSocket::~UdpSocket() {
+  if (handle != -1) {
+    close(handle);
+  }
+}
+
+UdpSocket &UdpSocket::operator=(UdpSocket &&other) {
+  handle = std::exchange(other.handle, -1);
+  return *this;
+}
+
+UdpSocket::UdpSocket(UdpSocket &&other)
+    : handle(std::exchange(other.handle, -1)) {}
 
 std::optional<UdpSocket> UdpSocket::bind(std::unique_ptr<SocketAddr> addr) {
   auto ip = addr->ip()->to_string();
@@ -56,20 +72,25 @@ std::optional<UdpSocket> UdpSocket::bind(std::unique_ptr<SocketAddr> addr) {
 
 std::optional<std::pair<size_t, std::unique_ptr<SocketAddr>>>
 UdpSocket::recv_from(std::span<std::byte> buf) const {
-  sockaddr_storage their_addr{0};
-  socklen_t addr_len = sizeof(their_addr);
+  sockaddr_in addr{0};
+  socklen_t addr_len = sizeof(addr);
   auto bytes = recvfrom(handle, buf.data(), buf.size_bytes(), 0,
-                        (struct sockaddr *)&their_addr, &addr_len);
+                        reinterpret_cast<sockaddr *>(&addr), &addr_len);
   if (bytes < 0) {
     fmt::println(stderr, "recvfrom: {}", strerror(errno));
     return {};
   }
-  return std::make_pair(bytes, nullptr);
+  char s[INET6_ADDRSTRLEN];
+  inet_ntop(addr.sin_family, get_in_addr((struct sockaddr *)&addr), s,
+            sizeof s);
+  auto sock_addr =
+      std::make_unique<SocketAddrV4>(Ipv4Addr::from(s), htons(addr.sin_port));
+  return std::make_pair(bytes, std::move(sock_addr));
 }
 
 std::optional<size_t> UdpSocket::send_to(
     std::span<std::byte> buf, std::unique_ptr<SocketAddr> addr) const {
-  auto bytes = sendto(handle, buf.data(), buf.size(), 0, nullptr, 0);
+  auto bytes = sendto(handle, buf.data(), buf.size_bytes(), 0, nullptr, 0);
   if (bytes < 0) {
     fmt::println(stderr, "sendto: {}", strerror(errno));
     return {};

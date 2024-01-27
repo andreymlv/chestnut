@@ -3,6 +3,7 @@
 #include <fmt/ranges.h>
 
 #include <array>
+#include <charconv>
 #include <cstdint>
 #include <string>
 
@@ -24,6 +25,27 @@ class Ipv4Addr : public IpAddr {
  public:
   static const auto create(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
     return Ipv4Addr(M{{a, b, c, d}});
+  }
+
+  // TODO: rewrite this xD
+  static const auto from(std::string_view s) {
+    auto to_int = [](std::string_view s) -> uint8_t {
+      int value{};
+      if (std::from_chars(s.data(), s.data() + s.size(), value).ec ==
+          std::errc{})
+        return value;
+      else
+        return -1;
+    };
+
+    std::array<size_t, 3> dots{};
+    dots[0] = s.find('.', 0);
+    dots[1] = s.find('.', dots[0]);
+    dots[2] = s.find('.', dots[1]);
+    auto a = to_int(s.substr(0, dots[0]));
+    return Ipv4Addr(
+        M{{to_int(s.substr(0, dots[0])), to_int(s.substr(dots[0], dots[1])),
+           to_int(s.substr(dots[1], dots[2])), to_int(s.substr(dots[2]))}});
   }
 
   const auto octets() const { return m.octets; };

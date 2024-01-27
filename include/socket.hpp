@@ -9,6 +9,7 @@
 #include "socket_addr.hpp"
 
 #ifndef _WIN32
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -42,8 +43,13 @@ inline void *get_in_addr(struct sockaddr *sa) {
 class UdpSocket {
   int handle;
   explicit UdpSocket(int handle);
+  UdpSocket();
 
  public:
+  UdpSocket(UdpSocket &&other);
+
+  UdpSocket &operator=(UdpSocket &&other);
+
   ~UdpSocket();
 
   static std::optional<UdpSocket> bind(std::unique_ptr<SocketAddr> addr);
