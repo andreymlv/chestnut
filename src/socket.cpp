@@ -58,8 +58,8 @@ std::optional<std::pair<size_t, std::unique_ptr<SocketAddr>>>
 UdpSocket::recv_from(std::span<std::byte> buf) const {
   sockaddr_storage their_addr{0};
   socklen_t addr_len = sizeof(their_addr);
-  auto bytes = ::recvfrom(handle, buf.data(), buf.size_bytes(), 0,
-                          (struct sockaddr *)&their_addr, &addr_len);
+  auto bytes = recvfrom(handle, buf.data(), buf.size_bytes(), 0,
+                        (struct sockaddr *)&their_addr, &addr_len);
   if (bytes < 0) {
     fmt::println(stderr, "recvfrom: {}", strerror(errno));
     return {};
