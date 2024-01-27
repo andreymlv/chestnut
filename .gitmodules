@@ -1,3 +1,0 @@
-[submodule "deps/glfwpp"]
-	path = deps/glfwpp
-	url = https://github.com/janekb04/glfwpp
