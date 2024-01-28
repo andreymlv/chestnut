@@ -2,6 +2,10 @@
 
 #include <memory>
 
+#ifndef _WIN32
+#include <arpa/inet.h>
+#endif  // _WIN32
+
 #include "ip_addr.hpp"
 
 class SocketAddr {
@@ -20,6 +24,12 @@ class SocketAddrV4 : public SocketAddr {
  public:
   SocketAddrV4(Ipv4Addr ip, uint16_t port) : m(ip, port) {}
 
+  const static auto from(const sockaddr_in &addr) {
+    char s[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &addr.sin_addr, s, sizeof(s));
+    return SocketAddrV4(Ipv4Addr::from(s), htons(addr.sin_port));
+  }
+
   const uint16_t port() const override { return m.port; }
 
   const std::unique_ptr<IpAddr> ip() const override {
@@ -37,8 +47,7 @@ class SocketAddrV6 : public SocketAddr {
   } m;
 
  public:
-  SocketAddrV6(Ipv6Addr ip, uint16_t port, uint32_t flowinfo, uint32_t scope_id)
-      : m(ip, port, flowinfo, scope_id) {}
+  SocketAddrV6(Ipv6Addr ip, uint16_t port, uint32_t flowinfo, uint32_t scope_id) : m(ip, port, flowinfo, scope_id) {}
 
   const uint16_t port() const override { return m.port; }
 

@@ -8,14 +8,12 @@
 
 int main(int argc, char** argv) {
   cxxopts::Options options("chestnut", "Simple music game");
+  // clang-format off
   options.add_options()
-
-      ("a,address", "IP Address",
-       cxxopts::value<std::string>()->default_value("localhost"))
-
-          ("p,port", "Port", cxxopts::value<uint16_t>()->default_value("0"))
-
-              ("h,help", "Print usage");
+    ("a,address", "IP Address", cxxopts::value<std::string>()->default_value("localhost"))
+    ("p,port", "Port", cxxopts::value<uint16_t>()->default_value("0"))
+    ("h,help", "Print usage");
+  // clang-format on
 
   auto result = options.parse(argc, argv);
   if (result.count("help")) {

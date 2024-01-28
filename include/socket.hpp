@@ -31,13 +31,6 @@ inline bool reuse_socket(int handle) {
   return true;
 }
 
-inline void *get_in_addr(struct sockaddr *sa) {
-  if (sa->sa_family == AF_INET) {
-    return &(((struct sockaddr_in *)sa)->sin_addr);
-  }
-  return &(((struct sockaddr_in6 *)sa)->sin6_addr);
-}
-
 }  // namespace
 
 class UdpSocket {
@@ -54,9 +47,7 @@ class UdpSocket {
 
   static std::optional<UdpSocket> bind(std::unique_ptr<SocketAddr> addr);
 
-  std::optional<std::pair<size_t, std::unique_ptr<SocketAddr>>> recv_from(
-      std::span<std::byte> buf) const;
+  std::optional<std::pair<size_t, std::unique_ptr<SocketAddr>>> recv_from(std::span<std::byte> buf) const;
 
-  std::optional<size_t> send_to(std::span<std::byte> buf,
-                                std::unique_ptr<SocketAddr> addr) const;
+  std::optional<size_t> send_to(std::span<std::byte> buf, std::unique_ptr<SocketAddr> addr) const;
 };

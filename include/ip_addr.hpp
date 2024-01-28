@@ -3,8 +3,8 @@
 #include <fmt/ranges.h>
 
 #include <array>
-#include <charconv>
 #include <cstdint>
+#include <sstream>
 #include <string>
 
 class IpAddr {
@@ -17,42 +17,30 @@ class IpAddr {
 };
 
 class Ipv4Addr : public IpAddr {
-  struct M {
-    std::array<uint8_t, 4> octets;
+  union M {
+    std::array<uint8_t, 4> array;
+    uint32_t octets;
   } m;
   explicit Ipv4Addr(M m) : m(std::move(m)) {}
 
  public:
-  static const auto create(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
-    return Ipv4Addr(M{{a, b, c, d}});
-  }
+  static const auto create(uint8_t a, uint8_t b, uint8_t c, uint8_t d) { return Ipv4Addr(M{.array = {a, b, c, d}}); }
 
-  // TODO: rewrite this xD
   static const auto from(std::string_view s) {
-    auto to_int = [](std::string_view s) -> uint8_t {
-      int value{};
-      if (std::from_chars(s.data(), s.data() + s.size(), value).ec ==
-          std::errc{})
-        return value;
-      else
-        return -1;
-    };
-
-    std::array<size_t, 3> dots{};
-    dots[0] = s.find('.', 0);
-    dots[1] = s.find('.', dots[0]);
-    dots[2] = s.find('.', dots[1]);
-    auto a = to_int(s.substr(0, dots[0]));
-    return Ipv4Addr(
-        M{{to_int(s.substr(0, dots[0])), to_int(s.substr(dots[0], dots[1])),
-           to_int(s.substr(dots[1], dots[2])), to_int(s.substr(dots[2]))}});
+    std::array<uint8_t, 4> result;
+    std::stringstream ss(s.data());
+    std::string token;
+    int i = 0;
+    while (std::getline(ss, token, '.')) {
+      result[i++] = stoi(token);
+    }
+    return Ipv4Addr(M{result});
   }
 
-  const auto octets() const { return m.octets; };
+  const auto octets() const { return m.array; };
+  const auto octets_as_u32() const { return m.octets; };
 
-  const std::string to_string() const override {
-    return fmt::format("{}", fmt::join(octets(), "."));
-  };
+  const std::string to_string() const override { return fmt::format("{}", fmt::join(octets(), ".")); };
   const bool is_ipv4() const override { return true; };
   const bool is_ipv6() const override { return false; };
 
@@ -68,8 +56,8 @@ class Ipv6Addr : public IpAddr {
   explicit Ipv6Addr(M m) : m(std::move(m)) {}
 
  public:
-  static const auto create(uint16_t a, uint16_t b, uint16_t c, uint16_t d,
-                           uint16_t e, uint16_t f, uint16_t g, uint16_t h) {
+  static const auto create(uint16_t a, uint16_t b, uint16_t c, uint16_t d, uint16_t e, uint16_t f, uint16_t g,
+                           uint16_t h) {
     std::array<uint16_t, 8> arr16 = {a, b, c, d, e, f, g};
 
     std::array<uint8_t, 16> arr8;
@@ -83,9 +71,7 @@ class Ipv6Addr : public IpAddr {
 
   const auto octets() const { return m.octets; };
 
-  const std::string to_string() const override {
-    return fmt::format("{}", fmt::join(octets(), "."));
-  };
+  const std::string to_string() const override { return fmt::format("{}", fmt::join(octets(), ".")); };
   const bool is_ipv4() const override { return false; };
   const bool is_ipv6() const override { return true; };
 };
