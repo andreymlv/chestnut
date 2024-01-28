@@ -1,38 +1,23 @@
-#include <fmt/ranges.h>
 
-#include <array>
-#include <cstddef>
+#include <QCommandLineParser>
+#include <QCoreApplication>
 
-#include "cxxopts.hpp"
-#include "socket.hpp"
+#include "server.hpp"
 
-int main(int argc, char** argv) {
-  cxxopts::Options options("chestnut", "Simple music game");
-  // clang-format off
-  options.add_options()
-    ("a,address", "IP Address", cxxopts::value<std::string>()->default_value("localhost"))
-    ("p,port", "Port", cxxopts::value<uint16_t>()->default_value("0"))
-    ("h,help", "Print usage");
-  // clang-format on
-
-  auto result = options.parse(argc, argv);
-  if (result.count("help")) {
-    fmt::println("{}", options.help());
-    return 0;
+int main(int argc, char **argv) {
+  QCoreApplication app(argc, argv);
+  auto args = app.arguments();
+  if (args.length() == 2) {
+    quint16 port(args[1].toUShort());
+    Server server(port, &app);
+    return QCoreApplication::exec();
+  } else if (args.length() == 3) {
+    QHostAddress ip(args[1]);
+    quint16 port(args[2].toUShort());
+    SockAddr addr(ip, port);
+    return QCoreApplication::exec();
+  } else {
+    return 1;
   }
-
-  auto ip = result["address"].as<std::string>();
-  auto port = result["port"].as<uint16_t>();
-
-  auto addr = std::make_unique<SocketAddrV4>(Ipv4Addr::LOCALHOST, port);
-  auto socket = UdpSocket::bind(std::move(addr)).value();
-
-  std::array<std::byte, 128> buf{};
-  auto [amt, src] = socket.recv_from(buf).value();
-  fmt::println("[{}]", fmt::join(buf, ", "));
-
-  std::ranges::reverse(buf);
-  auto _ = socket.send_to(buf, std::move(src)).value();
-
-  return 0;
+  return 2;
 }

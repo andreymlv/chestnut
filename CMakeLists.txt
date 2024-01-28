@@ -4,32 +4,15 @@ project(chestnut VERSION 0.0.1 LANGUAGES CXX C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-include(FetchContent)
+find_package(Qt6 REQUIRED COMPONENTS Core Network)
 
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+qt_standard_project_setup()
 
-FetchContent_Declare(
-  glfw
-  GIT_REPOSITORY https://github.com/glfw/glfw.git
-  GIT_TAG e2c92645460f680fd272fd2eed591efb2be7dc31
-)
-FetchContent_Declare(
-  fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG e69e5f977d458f2650bb346dadf2ad30c5320281
-)
-FetchContent_MakeAvailable(glfw fmt)
-
-set(SRC
-  src/gl.c
+qt_add_executable(${PROJECT_NAME}
+  include/server.hpp
+  src/server.cpp
   src/main.cpp
-  src/ip_addr.cpp
-  src/socket.cpp
 )
-
-add_executable(${PROJECT_NAME} ${SRC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw fmt::fmt)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Core Qt6::Network)
 target_include_directories(${PROJECT_NAME} PRIVATE include/)
