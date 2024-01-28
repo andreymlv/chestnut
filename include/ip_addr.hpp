@@ -17,14 +17,13 @@ class IpAddr {
 };
 
 class Ipv4Addr : public IpAddr {
-  union M {
-    std::array<uint8_t, 4> array;
-    uint32_t octets;
+  struct M {
+    std::array<uint8_t, 4> octets;
   } m;
   explicit Ipv4Addr(M m) : m(std::move(m)) {}
 
  public:
-  static const auto create(uint8_t a, uint8_t b, uint8_t c, uint8_t d) { return Ipv4Addr(M{.array = {a, b, c, d}}); }
+  static const auto create(uint8_t a, uint8_t b, uint8_t c, uint8_t d) { return Ipv4Addr(M{.octets = {a, b, c, d}}); }
 
   static const auto from(std::string_view s) {
     std::array<uint8_t, 4> result;
@@ -37,8 +36,7 @@ class Ipv4Addr : public IpAddr {
     return Ipv4Addr(M{result});
   }
 
-  const auto octets() const { return m.array; };
-  const auto octets_as_u32() const { return m.octets; };
+  const auto octets() const { return m.octets; };
 
   const std::string to_string() const override { return fmt::format("{}", fmt::join(octets(), ".")); };
   const bool is_ipv4() const override { return true; };
