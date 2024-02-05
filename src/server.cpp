@@ -6,7 +6,7 @@
 Server::Server(quint16 port, QObject* parent)
     : QObject(parent),
       m(M{
-          .socket = QUdpSocket(this),
+          .socket = QUdpSocket(parent),
       }) {
   m.socket.bind(QHostAddress::AnyIPv4, port);
   connect(&m.socket, &QUdpSocket::readyRead, this, &Server::run);
@@ -21,7 +21,10 @@ void Server::run() {
     const auto datagram = m.socket.receiveDatagram();
     const auto buf = datagram.data();
     const auto sender = SockAddr(datagram.senderAddress(), datagram.senderPort());
-    if (!m.clients.contains(sender)) m.clients.insert(sender);
+    if (!m.clients.contains(sender)) {
+      qDebug() << "New connection:" << sender;
+      m.clients.insert(sender);
+    }
     for (const auto& client : std::as_const(m.clients)) {
       if (client != sender) {
         auto _ = m.socket.writeDatagram(buf, client.ip, client.port);
