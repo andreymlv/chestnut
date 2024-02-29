@@ -4,13 +4,16 @@ find_package(Qt6 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup()
 
-qt_add_executable(${PROJECT_NAME}
+qt_add_executable(
+  ${PROJECT_NAME}
   src/main.cpp
 )
 
-qt_add_qml_module(${PROJECT_NAME}
+qt_add_qml_module(
+    ${PROJECT_NAME}
     URI chestnut
     VERSION 1.0
+    RESOURCE_PREFIX /andreymlv
     QML_FILES Main.qml
 )
 
