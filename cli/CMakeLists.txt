@@ -1,6 +1,6 @@
 project(chestnut-cli VERSION 0.0.1 LANGUAGES CXX C)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Network Multimedia)
+find_package(Qt6 REQUIRED COMPONENTS Core Multimedia)
 
 qt_standard_project_setup()
 
@@ -13,7 +13,6 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
 target_link_libraries(${PROJECT_NAME}
   PRIVATE chestnut
   PRIVATE Qt6::Core
-  PRIVATE Qt6::Network
   PRIVATE Qt6::Multimedia
 )
 
