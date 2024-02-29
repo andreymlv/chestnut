@@ -8,6 +8,7 @@ qt_add_library(${PROJECT_NAME}
   SHARED
   include/server.hpp
   include/client.hpp
+  include/sockaddr.hpp
   src/server.cpp
   src/client.cpp
 )
