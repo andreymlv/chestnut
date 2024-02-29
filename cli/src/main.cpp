@@ -3,9 +3,8 @@
 #include <QCommandLineParser>
 #include <QCoreApplication>
 #include <QMediaDevices>
-
-#include "client.hpp"
-#include "server.hpp"
+#include <client.hpp>
+#include <server.hpp>
 
 int main(int argc, char** argv) {
   QCoreApplication app(argc, argv);
