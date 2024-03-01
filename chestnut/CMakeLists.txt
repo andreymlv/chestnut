@@ -1,5 +1,7 @@
 project(chestnut VERSION 0.0.1 LANGUAGES CXX C)
 
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+
 find_package(Qt6 REQUIRED COMPONENTS Core Network Multimedia)
 
 qt_standard_project_setup()

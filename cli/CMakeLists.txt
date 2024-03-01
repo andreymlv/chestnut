@@ -22,3 +22,29 @@ install(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+if (WIN32)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${Qt6}/Qt6Cored.dll
+            ${Qt6}/Qt6Networkd.dll
+            ${Qt6}/Qt6Multimediad.dll
+            ${Qt6}/Qt6Guid.dll
+            ${CMAKE_CURRENT_BINARY_DIR}/
+        )
+    elseif (
+        (CMAKE_BUILD_TYPE STREQUAL "Release") 
+        OR (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo") 
+        OR (CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    )
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${Qt6}/Qt6Core.dll
+            ${Qt6}/Qt6Network.dll
+            ${Qt6}/Qt6Multimedia.dll
+            ${Qt6}/Qt6Gui.dll
+            ${CMAKE_CURRENT_BINARY_DIR}/
+        )
+    endif()
+endif()
