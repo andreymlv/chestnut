@@ -11,6 +11,8 @@ Window {
   RowLayout {
     anchors.fill: parent
 
+    Text { text: applicationData.getCurrentDateTime() }
+
     Button {
       Layout.fillWidth: true
       Layout.fillHeight: true

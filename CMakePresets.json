@@ -6,8 +6,8 @@
       "hidden": true,
       "generator": "Ninja",
       "inherits": "Qt",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
+      "binaryDir": "${sourceDir}/build",
+      "installDir": "${sourceDir}/install/${presetName}",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
         "CMAKE_CXX_COMPILER": "cl.exe",
@@ -32,8 +32,8 @@
       "name": "unix-base",
       "hidden": true,
       "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
+      "binaryDir": "${sourceDir}/build",
+      "installDir": "${sourceDir}/install/${presetName}",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clazy"
@@ -42,7 +42,6 @@
     {
       "name": "MSVC-Debug",
       "inherits": "windows-base",
-      "binaryDir": "${sourceDir}/out/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_FLAGS": "-DQT_QML_DEBUG"
@@ -51,30 +50,24 @@
     {
       "name": "MSVC-Release",
       "inherits": "windows-base",
-      "binaryDir": "${sourceDir}/out/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
     },
     {
-      "hidden": true,
-      "name": "Qt",
+      "name": "Unix-Debug",
+      "inherits": "unix-base",
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "$env{QTDIR}"
-      },
-      "environment": {
-        "PATH": "$penv{PATH};$env{QTDIR}/bin"
-      },
-      "vendor": {
-        "qt-project.org/Qt": {
-          "checksum": "Sp19WUpde73JS7nK33HZMqVZTyI="
-        }
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS": "-DQT_QML_DEBUG"
+      }
+    },
+    {
+      "name": "Unix-Release",
+      "inherits": "unix-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
       }
     }
-  ],
-  "vendor": {
-    "qt-project.org/Presets": {
-      "checksum": "18vrafHTCdyJ588o2YMW43UM/XA="
-    }
-  }
+  ]
 }

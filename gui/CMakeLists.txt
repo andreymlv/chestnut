@@ -6,6 +6,7 @@ qt_standard_project_setup()
 
 qt_add_executable(
   ${PROJECT_NAME}
+  include/application.hpp
   src/main.cpp
 )
 
@@ -25,6 +26,8 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE chestnut
   PRIVATE Qt6::Quick
 )
+
+target_include_directories(${PROJECT_NAME} PRIVATE include/)
 
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME}

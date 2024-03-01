@@ -8,6 +8,8 @@ Client::Client(const M &m, QObject *parent) : QObject(parent), m(std::move(m)) {
 }
 
 Client::~Client() {
+  m.pullTimer->stop();
+  m.pushTimer->stop();
   if (m.socket) {
     if (m.socket->isOpen()) {
       m.socket->close();
@@ -22,8 +24,6 @@ Client::~Client() {
     m.audioSink->stop();
     delete m.audioSink;
   }
-  m.pullTimer->stop();
-  m.pushTimer->stop();
 }
 
 Client Client::create(const SockAddr &addr, const QAudioDevice &deviceInfo, QObject *parent) {
