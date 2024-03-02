@@ -1,23 +1,20 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QIcon>
 
-#include "application.hpp"
+/* #include "application.hpp" */
 
 int main(int argc, char** argv) {
   QGuiApplication app(argc, argv);
 
-  /* All objects must be constructed before engine */
-  ApplicationData data(&app);
+  QGuiApplication::setWindowIcon(QIcon(":/icon.png"));
 
   QQmlApplicationEngine engine;
-  const QUrl url(u"qrc:/andreymlv/chestnut/Main.qml"_qs);
   QObject::connect(
       &engine, &QQmlApplicationEngine::objectCreationFailed, &app, []() { QCoreApplication::exit(-1); },
       Qt::QueuedConnection);
-  auto* context = engine.rootContext();
-  context->setContextProperty("applicationData", &data);
-  engine.load(url);
+  engine.loadFromModule("chestnut", "Main");
 
   return app.exec();
 }

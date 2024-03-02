@@ -9,6 +9,7 @@ Server::Server(quint16 port, QObject* parent)
           .socket = QUdpSocket(parent),
       }) {
   m.socket.bind(QHostAddress::AnyIPv4, port);
+  qDebug() << "Server started on port" << m.socket.localPort();
   connect(&m.socket, &QUdpSocket::readyRead, this, &Server::run);
 }
 

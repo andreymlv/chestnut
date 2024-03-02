@@ -19,8 +19,8 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
 
 target_link_libraries(${PROJECT_NAME}
   PRIVATE Qt6::Core
-  PRIVATE Qt6::Network
-  PRIVATE Qt6::Multimedia
+  Qt6::Network
+  Qt6::Multimedia
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC include/)

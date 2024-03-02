@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-project(chestnut VERSION 0.0.1 LANGUAGES CXX)
+project(chestnut VERSION 0.0.1)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
