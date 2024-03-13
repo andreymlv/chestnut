@@ -1,2 +1,4 @@
 .cache/
 build/
+discover/target
+discover/Cargo.lock
