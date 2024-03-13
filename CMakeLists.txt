@@ -30,7 +30,6 @@ endif()
 
 add_subdirectory(deps/opus)
 
-
 add_subdirectory(chestnut)
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Android")
   add_subdirectory(cli)

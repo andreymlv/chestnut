@@ -4,7 +4,7 @@
 #include <QCoreApplication>
 #include <QMediaDevices>
 #include <client.hpp>
-#include <server.hpp>
+#include <room.hpp>
 
 int main(int argc, char** argv) {
   QCoreApplication app(argc, argv);
@@ -13,14 +13,20 @@ int main(int argc, char** argv) {
   parser.setApplicationDescription("chestnut is a VOIP applicaition");
   parser.addHelpOption();
 
-  QCommandLineOption clAddress(QStringList() << "a"
-                                             << "address",
-                               QObject::tr("Server adress."), "address");
+  QCommandLineOption clAddress(
+      QStringList() << "a"
+                    << "address",
+      QObject::tr("Room adress."),
+      "address"
+  );
   parser.addOption(clAddress);
 
-  QCommandLineOption clPort(QStringList() << "p"
-                                          << "port",
-                            QObject::tr("Server port."), "port");
+  QCommandLineOption clPort(
+      QStringList() << "p"
+                    << "port",
+      QObject::tr("Room port."),
+      "port"
+  );
   parser.addOption(clPort);
 
   parser.process(app);
@@ -30,20 +36,26 @@ int main(int argc, char** argv) {
 
   if (hostMode) {
     auto port = parser.value(clPort).toUShort();
-    Server server(port, &app);
+    Room room(port, &app);
     return QCoreApplication::exec();
   }
 
   if (clientMode) {
-    const QAudioDevice inputDevice = QMediaDevices::defaultAudioInput();
+    QAudioDevice const inputDevice = QMediaDevices::defaultAudioInput();
     if (inputDevice.isNull()) {
       qDebug() << "There is no audio input device available.";
       return 1;
     }
+    QAudioFormat format;
+    format.setSampleRate(16000);
+    format.setChannelCount(1);
+    format.setSampleFormat(QAudioFormat::Int16);
     QHostAddress ip(parser.value(clAddress));
     auto port = parser.value(clPort).toUShort();
     SockAddr addr(ip, port);
-    Client client = Client::create(std::move(addr), std::move(inputDevice), &app);
+    Client client{
+        std::move(addr), std::move(inputDevice), std::move(format), &app
+    };
     client.start();
     return QCoreApplication::exec();
   }

@@ -6,6 +6,7 @@ qt_standard_project_setup()
 
 qt_add_executable(${PROJECT_NAME}
   include/chestnut.hpp
+  src/chestnut.cpp
   src/main.cpp
 )
 
@@ -33,6 +34,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
 target_link_libraries(${PROJECT_NAME}
   PRIVATE chestnut
   Qt6::Quick
+  Qt6::Multimedia
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include/)

@@ -9,45 +9,39 @@
 #include <QNetworkDatagram>
 #include <QTimer>
 #include <QUdpSocket>
+#include <memory>
 
 #include "sockaddr.hpp"
 
-class Client: public QObject {
+class Client : public QObject {
   Q_OBJECT
 
-  struct M {
-    SockAddr addr = SockAddr {QHostAddress::LocalHost, 0};
-    QUdpSocket* socket = nullptr;
+  QUdpSocket socket;
 
-    QAudioSink* audioSink = nullptr;
-    QIODevice* sink = nullptr;
-    QTimer* pushTimer = nullptr;
-    OpusDecoder* decoder = nullptr;
+  QAudioFormat format;
 
-    QAudioSource* audioInput = nullptr;
-    QIODevice* source = nullptr;
-    QTimer* pullTimer = nullptr;
-    OpusEncoder* encoder = nullptr;
-  } m;
+  std::unique_ptr<QAudioSink> audioSink;
+  QIODevice* sink = nullptr;
+  QTimer pushTimer;
+  std::unique_ptr<OpusDecoder, std::function<void(OpusDecoder*)>> decoder;
 
-  Client(M const& m, QObject* parent);
+  std::unique_ptr<QAudioSource> audioInput;
+  QIODevice* source = nullptr;
+  QTimer pullTimer;
+  std::unique_ptr<OpusEncoder, std::function<void(OpusEncoder*)>> encoder;
 
  public:
-  Client(Client&& other) : m(std::move(other.m)) {}
-
-  Client& operator=(Client&& other) {
-    m = std::move(other.m);
-    return *this;
-  }
-
+  Client(
+      SockAddr const& addr,
+      QAudioDevice const& deviceInfo,
+      QAudioFormat const& format,
+      QObject* parent = nullptr
+  );
   ~Client();
 
   void start();
 
   void stop();
-
-  static Client
-  create(SockAddr const& addr, QAudioDevice const& deviceInfo, QObject* parent);
 
  private slots:
   void record();

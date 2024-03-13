@@ -30,23 +30,32 @@ ApplicationWindow {
         Item {
             id: discoverTab
             ListView {
-                id: serverListView
                 anchors.fill: parent
-                required model
-                model: serverModel
-                delegate: serverDelegate
-            }
-            RoundButton {
-                id: addHostButton
-                text: "+"
-                anchors.bottom: serverListView.bottom
-                anchors.bottomMargin: 10
-                anchors.horizontalCenter: parent.horizontalCenter
-                onClicked: bar.currentIndex = 1
+                model: Chestnut.rooms
+                delegate: RoundButton {
+                    text: modelData
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
             }
         }
         ColumnLayout {
             id: hostTab
+
+            TextField {
+                id: portTextField
+                Layout.fillWidth: true
+                Layout.topMargin: 10
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
+
+                validator: IntValidator {
+                    bottom: 1024
+                    top: 65535
+                }
+                placeholderText: qsTr("Enter port")
+                cursorVisible: true
+                visible: true
+            }
 
             Button {
                 Layout.fillWidth: true
@@ -55,6 +64,7 @@ ApplicationWindow {
                 Layout.rightMargin: 10
 
                 text: qsTr("Start")
+                onClicked: Chestnut.run_room(portTextField.text)
             }
 
             Button {
@@ -63,6 +73,7 @@ ApplicationWindow {
                 Layout.rightMargin: 10
 
                 text: qsTr("Stop")
+                onClicked: Chestnut.stop_room(portTextField.text)
             }
 
             Item {
@@ -93,6 +104,7 @@ ApplicationWindow {
                 Layout.rightMargin: 10
 
                 text: qsTr("Connect")
+                onClicked: Chestnut.client_connect(addressTextField.text)
             }
 
             Button {
@@ -101,6 +113,7 @@ ApplicationWindow {
                 Layout.rightMargin: 10
 
                 text: qsTr("Disconnect")
+                onClicked: Chestnut.client_disconnect()
             }
 
             Item {

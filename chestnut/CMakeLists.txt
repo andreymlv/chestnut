@@ -8,10 +8,10 @@ qt_standard_project_setup()
 
 qt_add_library(${PROJECT_NAME}
   SHARED
-  include/server.hpp
+  include/room.hpp
   include/client.hpp
   include/sockaddr.hpp
-  src/server.cpp
+  src/room.cpp
   src/client.cpp
 )
 
