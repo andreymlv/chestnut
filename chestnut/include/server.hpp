@@ -1,25 +1,25 @@
 #pragma once
 
+#include <QDateTime>
+#include <QScopedPointer>
 #include <QSet>
 #include <QUdpSocket>
+#include <memory>
 
-#include "sockaddr.hpp"
+#include "serveriml.hpp"
 
-class Server : public QObject {
+class Server final : public QObject {
   Q_OBJECT
 
-  struct M {
-    QUdpSocket socket;
-    QSet<SockAddr> clients;
-  } m;
-
-  void run();
-
  public:
-  Server(quint16 port, QObject *parent);
-  Server(Server &&) = delete;
-  Server(const Server &) = delete;
-  Server &operator=(Server &&) = delete;
-  Server &operator=(const Server &) = delete;
-  ~Server();
+  explicit Server(quint16 port, QObject *parent = nullptr);
+
+ private slots:
+  /**
+   * @brief Processes incoming messages from all connected clients.
+   */
+  void handle();
+
+ private:
+  std::unique_ptr<ServerImpl> m;
 };

@@ -1,6 +1,6 @@
 project(chestnut-gui VERSION 0.0.1 LANGUAGES CXX C)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia)
 
 qt_standard_project_setup()
 
@@ -36,6 +36,8 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include/)
+# Disable exceptions and runtime type identification
+target_compile_options(${PROJECT_NAME} PRIVATE -fexceptions -fno-rtti)
 
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME}

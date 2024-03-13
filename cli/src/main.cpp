@@ -15,12 +15,12 @@ int main(int argc, char** argv) {
 
   QCommandLineOption clAddress(QStringList() << "a"
                                              << "address",
-                               QObject::tr("Server adress."));
+                               QObject::tr("Server adress."), "address");
   parser.addOption(clAddress);
 
   QCommandLineOption clPort(QStringList() << "p"
                                           << "port",
-                            QObject::tr("Server port."));
+                            QObject::tr("Server port."), "port");
   parser.addOption(clPort);
 
   parser.process(app);
@@ -44,8 +44,7 @@ int main(int argc, char** argv) {
     auto port = parser.value(clPort).toUShort();
     SockAddr addr(ip, port);
     Client client = Client::create(std::move(addr), std::move(inputDevice), &app);
-    client.record();
-
+    client.start();
     return QCoreApplication::exec();
   }
 

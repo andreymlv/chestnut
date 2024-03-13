@@ -18,12 +18,15 @@ qt_add_library(${PROJECT_NAME}
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
 
 target_link_libraries(${PROJECT_NAME}
-  PRIVATE Qt6::Core
+  PUBLIC Qt6::Core
   Qt6::Network
   Qt6::Multimedia
+  Opus::opus
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC include/)
+# Disable exceptions and runtime type identification
+target_compile_options(${PROJECT_NAME} PRIVATE -fexceptions -fno-rtti)
 
 include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME}

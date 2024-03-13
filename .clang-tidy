@@ -3,7 +3,7 @@ Checks:          'clang-diagnostic-*,clang-analyzer-*'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 AnalyzeTemporaryDtors: false
-FormatStyle:     google
+FormatStyle:     chromium
 User:            andreymlv
 CheckOptions:
   hicpp-move-const-arg.CheckMoveToConstRef: 'true'

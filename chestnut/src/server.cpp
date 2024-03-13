@@ -1,35 +1,43 @@
 #include "server.hpp"
 
 #include <QNetworkDatagram>
-#include <utility>
+#include <QString>
 
-Server::Server(quint16 port, QObject* parent)
-    : QObject(parent),
-      m(M{
-          .socket = QUdpSocket(parent),
-      }) {
-  m.socket.bind(QHostAddress::AnyIPv4, port);
-  qDebug() << "Server started on port" << m.socket.localPort();
-  connect(&m.socket, &QUdpSocket::readyRead, this, &Server::run);
+#include "sockaddr.hpp"
+
+Server::Server(quint16 port, QObject* parent) :
+  QObject(parent),
+  m(new ServerImpl(port)) {
+  if (!m->accept()) {
+    qDebug() << "Failed to bind to specified address";
+    return;
+  }
+  qDebug() << "Server started on port" << m->socket->localPort();
+  connect(m->socket.get(), &QUdpSocket::readyRead, this, &Server::handle);
 }
 
-Server::~Server() {
-  if (m.socket.isOpen()) m.socket.close();
-}
+void Server::handle() {
+  while (m->socket->hasPendingDatagrams()) {
+    QByteArray datagramBuffer;
+    datagramBuffer.resize(m->socket->pendingDatagramSize());
 
-void Server::run() {
-  while (m.socket.hasPendingDatagrams()) {
-    const auto datagram = m.socket.receiveDatagram();
-    const auto buf = datagram.data();
-    const auto sender = SockAddr(datagram.senderAddress(), datagram.senderPort());
-    if (!m.clients.contains(sender)) {
-      qDebug() << "New connection:" << sender;
-      m.clients.insert(sender);
+    QHostAddress addr;
+    quint16 port;
+    m->socket->readDatagram(
+      datagramBuffer.data(),
+      datagramBuffer.size(),
+      &addr,
+      &port
+    );
+
+    const SockAddr currentClient(addr, port);
+    if (!m->clients.contains(currentClient)) {
+      qInfo().noquote() << tr("%1:%2 has joined")
+                             .arg(currentClient.ip.toString())
+                             .arg(currentClient.port);
+      m->clients.insert(currentClient);
     }
-    for (const auto& client : std::as_const(m.clients)) {
-      if (client != sender) {
-        auto _ = m.socket.writeDatagram(buf, client.ip, client.port);
-      }
-    }
+
+    m->broadcast(datagramBuffer.data(), datagramBuffer.length(), currentClient);
   }
 }

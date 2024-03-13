@@ -2,10 +2,18 @@
   "version": 3,
   "configurePresets": [
     {
+      "name": "default",
+      "hidden": true,
+      "cacheVariables": {
+        "OPUS_BUILD_SHARED_LIBRARY": "ON",
+        "OPUS_DRED": "ON"
+      }
+    },
+    {
       "name": "windows-base",
+      "inherits": "default",
       "hidden": true,
       "generator": "Ninja",
-      "inherits": "Qt",
       "binaryDir": "${sourceDir}/build",
       "installDir": "${sourceDir}/install/${presetName}",
       "cacheVariables": {
@@ -30,6 +38,7 @@
     },
     {
       "name": "unix-base",
+      "inherits": "default",
       "hidden": true,
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build",
