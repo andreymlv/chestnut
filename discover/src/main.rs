@@ -22,7 +22,7 @@ struct Args {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
-    let addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), args.port);
+    let addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), args.port);
     let listener = TcpListener::bind(addr).await?;
 
     println!("Discover server started at {}", listener.local_addr()?);
@@ -44,9 +44,7 @@ async fn main() -> anyhow::Result<()> {
                     Err(_) => return,
                 };
 
-                let request = str::from_utf8(&buf[..n])
-                    .unwrap_or_default()
-                    .trim_matches(char::from(0));
+                let request = str::from_utf8(&buf[..n]).unwrap_or_default();
 
                 let command: Vec<_> = request.split_whitespace().collect();
 

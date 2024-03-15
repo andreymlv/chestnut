@@ -23,3 +23,8 @@ inline QDebug operator<<(QDebug debug, const SockAddr& addr) {
   debug.nospace() << addr.ip << ':' << addr.port;
   return debug;
 }
+
+inline QStringList operator<<(QStringList list, const SockAddr& addr) {
+  list << addr.ip.toString() << ":" << QString::number(addr.port);
+  return list;
+}

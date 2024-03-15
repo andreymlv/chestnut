@@ -14,6 +14,13 @@ class Room final : public QObject {
   explicit Room(quint16 port, QObject* parent = nullptr);
   ~Room() { qDebug() << "Room on port" << port << "closing"; }
 
+  SockAddr addr() const {
+    return {
+        socket.localAddress(),
+        socket.localPort(),
+    };
+  }
+
  private slots:
   void handle();
 

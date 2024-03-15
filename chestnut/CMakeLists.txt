@@ -11,6 +11,7 @@ qt_add_library(${PROJECT_NAME}
   include/room.hpp
   include/client.hpp
   include/sockaddr.hpp
+  include/discover.hpp
   src/room.cpp
   src/client.cpp
 )

@@ -66,7 +66,7 @@ class Chestnut : public QObject {
     SockAddr addr(QHostAddress(address[0]), address[1].toUShort());
 
     QAudioFormat format;
-    format.setSampleRate(16000);
+    format.setSampleRate(48000);
     format.setChannelCount(1);
     format.setSampleFormat(QAudioFormat::Int16);
 
